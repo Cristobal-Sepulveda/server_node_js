@@ -12,7 +12,7 @@ const User = {
   },
   list: async (req, res) => {
     const users = await Users.find();
-    res.status(200).send("users");
+    res.status(200).send(users);
   },
   create: async (req, res) => {
     console.log(req.body);
@@ -20,7 +20,7 @@ const User = {
     const savedUser = await user.save(user.id);
     res.status(201).send(savedUser._id);
   },
-  // a
+
   update: async (req, res) => {
     const { id } = req.params;
     const user = await Users.findOne({ _id: id });
@@ -34,7 +34,7 @@ const User = {
     if (user) {
       user.remove();
     }
-    res.sendtatus(204);
+    res.sendStatus(204);
   },
   urlNoExiste: async (req, res) => {
     res.status(404).send("Esta pagina no existe");

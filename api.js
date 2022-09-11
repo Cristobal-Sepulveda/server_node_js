@@ -24,13 +24,19 @@ app.use(express.json());
 //endpoints
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-app.get("/:id", user.get);
-app.get("/", user.list);
-app.post("/", user.create);
-app.put("/:id", user.update);
-app.patch("/:id", user.update);
-app.delete("/:id", user.destroy);
+app.get("/users", user.list);
+app.post("/users", user.create);
+app.get("/users/:id", user.get);
+app.put("/users/:id", user.update);
+app.patch("/users/:id", user.update);
+app.delete("/users/:id", user.destroy);
 
+//aqui le decimos que vaya a una carpeta y esa carpeta la serviremos
+app.use(express.static("client"));
+app.get("/", (req, res) => {
+  console.log(__dirname);
+  res.sendFile(`${__dirname}/index.html`);
+});
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //si el usuario ingresa una ruta inexistente...
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
