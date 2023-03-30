@@ -1,0 +1,24 @@
+{
+  "name": "apiholamundo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no te  st specified\" && exit 1",
+    "start": "nodemon -L"
+  },
+  "keywords": [],
+  "author": "Cristobal Sepulveda",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.5.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.5.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {  
+    "nodemon": "^2.0.22"
+  }
+}
