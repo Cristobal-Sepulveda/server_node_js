@@ -1,59 +1,45 @@
+const express = require("express");
 const mongoose = require("mongoose");
+const admin = require("firebase-admin")
+const serviceAccount = require("./serviceAccount.json")
+const jwtController = require("./jwt.controller");
+const morgan = require("morgan")
+const app = express();
+const jwt = require("jsonwebtoken");
+const { jwtGenerator } = require("./jsonwebtoken/jwtgenerator");
+require("dotenv").config();
 
-//aqui creo un modelo(los modelos se crean con mayuscula):
-//atributos:1)nombredelmodelo,2) atributos
-const User = mongoose.model("User", {
-  username: String,
-  edad: Number,
+
+//aqui creo el localhost:3000
+const port = 8080;
+
+//asi me conecto a la mongodb-cloud
+mongoose.connect(
+  "mongodb+srv://Cristobal:asdF1234@cluster0.rurnojx.mongodb.net/?retryWrites=true&w=majority"
+);
+
+admin.initializeApp({credential: admin.credential.cert(serviceAccount),})
+
+//esto convierte todo lo que caiga en un json
+app.use(express.json());
+app.use(morgan("dev"));
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//endpoints
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+app.get("/")
+app.get("/getToken", jwtController.getToken);
+app.post("/validateToken", jwtController.validateToken);
+app.get("*", urlNoExiste);
+app.post("*", urlNoExiste);
+
+const urlNoExiste = async(req, res) => {
+  res.status(404).send("Esta pagina no existe");
+}
+
+app.listen(port, () => {
+  console.log("http://Localhost:8080");
 });
 
-//funcion asincrona para crear usuario
-const crear = async () => {
-  const user = new User({ username: "chanchito feliz", edad: 25 });
-  //.save retorna una promesa, por lo tanto...
-  const savedUser = await user.save();
-  console.log(savedUser);
-};
 
-//crear();
-const buscarTodo = async () => {
-  //esto va a buscar, a la coleccion de User, todos los docs
-  //y lo devuelve como JSON
-  const users = await User.find();
-  console.log(users);
-};
-
-// buscarTodo();
-
-const buscar = async () => {
-  const user = await User.find({ username: "chanchito feliz" });
-  console.log(user);
-};
-
-// buscar();
-
-const buscarUno = async () => {
-  const user = await User.findOne({ username: "chanchito feliz" });
-  console.log(user);
-};
-
-// buscarUno();
-
-const actualizar = async () => {
-  const user = await User.findOne({ username: "chanchito feliz" });
-  user.edad = 30;
-  await user.save();
-};
-
-// actualizar();
-
-const eliminar = async () => {
-  const user = await User.findOne({ username: "chanchito feliz" });
-  try {
-    await user.remove();
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-//eliminar();
+module.exports = admin;
