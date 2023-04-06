@@ -19,17 +19,15 @@ const jwtGenerator = (id) => {
 
 const jwtVerify = async (token, res) => {
   if (!token) {
-    return res.status(401).json({
-      msg: "No se proporcionó un token"
-    });
+    return res.status(401).json({msg: "No se proporcionó un token"});
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.status(200).send("token valido")
-    //req.user = decoded
-    //next();
+
   } catch (err) {
+    
     if (err instanceof jwt.TokenExpiredError) {
       return res.status(401).json({msg: "El token ha expirado"});
     } else {
