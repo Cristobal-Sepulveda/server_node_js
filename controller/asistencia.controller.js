@@ -1,12 +1,21 @@
 const { firestore } = require("firebase-admin")
 const admin = require("firebase-admin");
-const serviceAccount = require("../serviceAccount.json");
+const serviceAccountDesarrollo = require("../serviceAccounts/serviceAccountDesarrollo.json");
+const serviceAccountProduccion = require("../serviceAccounts/serviceAccountProduccion.json");
 const getDistanceInMeters = require("../utils/haversine")
 
+//produccion
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://jorgegas-management-desa-a0dc2.firebaseio.com"
-  })
+    credential: admin.credential.cert(serviceAccountProduccion),
+    databaseURL: "https://jorge-gas-management.firebaseio.com"
+})
+
+//desarrollo
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccountDesarrollo),
+//     databaseURL: "https://jorgegas-management-desa-a0dc2.firebaseio.com"
+// })
+
 
 const firestoreGCP = admin.firestore();
 
