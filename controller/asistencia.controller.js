@@ -3,6 +3,8 @@ const admin = require("firebase-admin");
 const serviceAccountDesarrollo = require("../serviceAccounts/serviceAccountDesarrollo.json");
 const serviceAccountProduccion = require("../serviceAccounts/serviceAccountProduccion.json");
 const getDistanceInMeters = require("../utils/haversine")
+const moment = require('moment-timezone');
+
 
 //produccion
 admin.initializeApp({
@@ -33,16 +35,10 @@ const ingresoJornada = async(req,res) => {
     if(distanceInMeters>500){
         res.status(500).json({"msg": "Para poder marcar su ingreso debe de estar a menos de 500 metros de la empresa."})
     }else{
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1; // add 1 to get 1-12 instead of 0-11
-        const day = now.getDate();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
+        const now = moment.tz('America/Santiago');
+        const currentDate = now.format('DD-MM-YYYY');
+        const currentTime = now.format('HH:mm:ss');
         const docRef = firestoreGCP.collection("RegistroDeAsistencia").doc(id)
-        const currentDate = `${day}-${month}-${year}`
-        const currentTime = `${hours}:${minutes}:${seconds}`
 
         try{
            docRef.get()
@@ -104,16 +100,10 @@ const ingresoJornada = async(req,res) => {
 const salidaJornada = async(req,res) => {
     console.log(req.headers)
     const {id} = req.headers
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; // add 1 to get 1-12 instead of 0-11
-    const day = now.getDate();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+    const now = moment.tz('America/Santiago');
+    const currentDate = now.format('DD-MM-YYYY');
+    const currentTime = now.format('HH:mm:ss');
     const docRef = firestoreGCP.collection("RegistroDeAsistencia").doc(id)
-    const currentDate = `${day}-${month}-${year}`
-    const currentTime = `${hours}:${minutes}:${seconds}`
 
     docRef.get()
         .then((doc)=>{
