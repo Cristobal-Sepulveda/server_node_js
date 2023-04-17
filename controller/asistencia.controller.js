@@ -1,9 +1,12 @@
-const { firestore } = require("firebase-admin")
-const admin = require("firebase-admin");
-const serviceAccountDesarrollo = require("../serviceAccounts/serviceAccountDesarrollo.json");
-const serviceAccountProduccion = require("../serviceAccounts/serviceAccountProduccion.json");
 const getDistanceInMeters = require("../utils/haversine")
 const moment = require('moment-timezone');
+const {Firestore} = require('@google-cloud/firestore');
+const path = require("path");
+const keyFilename = path.join(__dirname, "../serviceAccounts/serviceAccountProduccion.json");
+const firestoreGCP = new Firestore({
+  projectId: 'jorge-gas-management',
+  keyFilename: keyFilename
+});
 
 
 
@@ -12,6 +15,10 @@ const ingresoJornada = async(req,res) => {
     const coordenadasJorgeGas = {latitude: -33.62549622379493, longitude: -70.58403775961933};
     const coordenadasDelUsuario = {latitude: parseFloat(latitude), longitude: parseFloat(longitude)};
     const distanceInMeters = getDistanceInMeters(coordenadasJorgeGas, coordenadasDelUsuario);
+    const now = moment.tz('America/Santiago');
+    const currentDate = now.format('DD-MM-YYYY');
+    const currentTime = now.format('HH:mm:ss');
+    const docRef = firestoreGCP.collection("RegistroDeAsistencia").doc(id)
 
     console.log(distanceInMeters);
     console.log(coordenadasDelUsuario);
@@ -21,11 +28,6 @@ const ingresoJornada = async(req,res) => {
     if(distanceInMeters>500){
         res.status(500).json({"msg": "Para poder marcar su ingreso debe de estar a menos de 500 metros de la empresa."})
     }else{
-        const now = moment.tz('America/Santiago');
-        const currentDate = now.format('DD-MM-YYYY');
-        const currentTime = now.format('HH:mm:ss');
-        const docRef = firestoreGCP.collection("RegistroDeAsistencia").doc(id)
-
         try{
            docRef.get()
             .then((doc) =>{
@@ -68,13 +70,13 @@ const ingresoJornada = async(req,res) => {
                         res.status(200).json({ "msg": "Se creo el registro de tu asistencia" })
                     })
                     .catch((e) => {
-                        console.log("error al crear el registro")
+                        console.log("error al crear el registro"+ e.message)
                         res.status(500).json({ "msg": e.message })
                     });
                 }
             })
             .catch((e) =>{
-                console.log("error al obtener el documento")
+                console.log("error al obtener el documento"+ e.message)
                 res.status(500).send(e.message)
             });
         }catch(e){
@@ -94,7 +96,7 @@ const salidaJornada = async(req,res) => {
     docRef.get()
         .then((doc)=>{
             if(!doc.exists){
-                res.status(500).json({"msg": "Antes de finalizar tu jornada debes de iniciarla."})
+                res.status(200).json({"msg": "Antes de finalizar tu jornada debes de iniciarla."})
             }else{
                 const registroAsistencia = doc.data().registroAsistencia
                 let aux = -1;
@@ -104,7 +106,7 @@ const salidaJornada = async(req,res) => {
                     }
                 }})
                 if(aux === -1){
-                    res.status(500).json({"msg" : "Antes de finalizar tu jornada debes de iniciarla."})
+                    res.status(200).json({"msg" : "Antes de finalizar tu jornada debes de iniciarla."})
                 }else{
                     if(registroAsistencia[aux].salidaJornada === ""){
                         registroAsistencia[aux].salidaJornada = currentTime
@@ -116,7 +118,7 @@ const salidaJornada = async(req,res) => {
                             res.status(500).json({"msg": e.message})
                         });
                     }else{
-                        res.status(500).json({"msg" : "Ya haz finalizado tu jornada de hoy." })
+                        res.status(200).json({"msg" : "Ya haz finalizado tu jornada de hoy." })
                     }
                 }
 
