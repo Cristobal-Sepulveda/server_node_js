@@ -2,6 +2,7 @@ const express = require("express");
 const jwtController = require("./controller/jwt.controller");
 const asistenciaController = require("./controller/asistencia.controller");
 const rdmController = require("./controller/rdm.controller");
+const rdaController = require("./controller/rda.controller");
 const morgan = require("morgan")
 const app = express();
 const admin = require("firebase-admin");
@@ -35,6 +36,7 @@ app.post("/ingresoJornada", asistenciaController.ingresoJornada);
 app.post("/salidaJornada", asistenciaController.salidaJornada);
 app.post("/rdmPedido", rdmController.pedido);
 app.post("/rdmEntrega", rdmController.entrega);
+app.post("/exportarRegistroDeAsistenciaAExcel", rdaController.exportarRegistroDeAsistenciaAExcel)
 app.get("*", urlNoExiste);
 app.post("*", urlNoExiste);
 

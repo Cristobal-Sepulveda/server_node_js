@@ -55,7 +55,7 @@ exports.notificarAdministradoresDeFaltaDeMaterial = functions.firestore
 
             
             // Check if the value of estaActivo changed to true
-            if (newValue.conMaterial === true) {
+            if (newValue.conMaterial === true && oldValue.conMaterial === false) {
                 const usuarioVolantero = await admin.firestore()
                     .collection('Usuarios')
                     .where('id', '==', registroId)
