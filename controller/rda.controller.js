@@ -12,7 +12,8 @@ const nodemailer = require('nodemailer');
 
 
 const exportarRegistroDeAsistenciaAExcel = async (req, res) => {
-  const {desde, hasta} = req.headers;
+  const {mes, anio} = req.headers;
+  console.log(mes, anio)
   const now = moment.tz('America/Santiago');
   const currentTime = now.format('HH:mm:ss');
   const colRef = firestoreGCP.collection("RegistroDeAsistencia");
@@ -28,7 +29,8 @@ const exportarRegistroDeAsistenciaAExcel = async (req, res) => {
           { header: 'Sueldo Diario', key: 'sueldoDiario' },
           { header: 'Días Trabajados', key: 'diasTrabajados' },
           { header: 'Sueldo', key: 'sueldo' },
-          { header: 'Bono', key: 'bono' },
+          { header: 'Bono_R', key: 'bonoR' },
+          { header: 'Bono_V', key: 'bonoV' },
           { header: 'Total', key: 'total' },
         ];
 
@@ -38,21 +40,33 @@ const exportarRegistroDeAsistenciaAExcel = async (req, res) => {
           const nombreCompleto = data.nombreCompleto;
           const sueldoDiario = 10000;
           let diasTrabajados = 0;
-          const bono = ""
-          const total = ""
+          const bonoR = "";
+          const bonoV = "";
+          const total = "";
+
           const registroAsistencia = data.registroAsistencia;
+
           registroAsistencia.forEach((map)=>{
-            if(isBetweenDates(map.fecha, desde, hasta)){
+            const fechaString = map.fecha;
+            const fechaParts = fechaString.split('-');
+            const fechaISO = fechaParts[2] + '-' + fechaParts[1] + '-' + fechaParts[0];
+            const fecha = new Date(fechaISO);
+            console.log(fecha.getFullYear())
+            console.log(fecha.getMonth())
+            if (fecha.getFullYear() === parseInt(anio) && fecha.getMonth() === parseInt(mes) - 1) {
               diasTrabajados++;
-            }  
+            }
           });
+
           const sueldo = sueldoDiario*diasTrabajados;
+
           const volantero = {
             "nombre": nombreCompleto,
             "sueldoDiario": sueldoDiario,
             "diasTrabajados": diasTrabajados,
             "sueldo": sueldo,
-            "bono": bono,
+            "bonoR": bonoR,
+            "bonoV": bonoV,
             "total": total
           };
           worksheet.addRow(volantero);

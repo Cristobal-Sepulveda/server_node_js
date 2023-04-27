@@ -3,12 +3,13 @@ const jwtController = require("./controller/jwt.controller");
 const asistenciaController = require("./controller/asistencia.controller");
 const rdmController = require("./controller/rdm.controller");
 const rdaController = require("./controller/rda.controller");
-const rdpController = require("./controller/rdp.controller")
+const rdpController = require("./controller/rdp.controller");
+const rdbController = require("./controller/rdb.controller");
 
-const morgan = require("morgan")
+const morgan = require("morgan");
 const app = express();
 const admin = require("firebase-admin");
-const serviceAccountProduccion = require("./serviceAccounts/serviceAccountProduccion.json")
+const serviceAccountProduccion = require("./serviceAccounts/serviceAccountProduccion.json");
 
 require("dotenv").config();
 app.use(express.json());
@@ -40,6 +41,7 @@ app.post("/rdmPedido", rdmController.pedido);
 app.post("/rdmEntrega", rdmController.entrega);
 app.post("/exportarRegistroDeAsistenciaAExcel", rdaController.exportarRegistroDeAsistenciaAExcel);
 app.post("/crearPedido", rdpController.crearPedido);
+app.post("/ingresarBono", rdbController.ingresarBono);
 app.get("*", urlNoExiste);
 app.post("*", urlNoExiste);
 

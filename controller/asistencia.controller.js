@@ -87,7 +87,8 @@ const ingresoJornada = async(req,res) => {
 
 const salidaJornada = async(req,res) => {
     console.log(req.headers)
-    const {id} = req.headers
+    const {id, tiempoenverde, tiempoenamarillo, tiempoenrojo, tiempoenazul, tiempoenrosado} = req.headers
+
     const now = moment.tz('America/Santiago');
     const currentDate = now.format('DD-MM-YYYY');
     const currentTime = now.format('HH:mm:ss');
@@ -109,12 +110,23 @@ const salidaJornada = async(req,res) => {
                     res.status(200).json({"msg" : "Antes de finalizar tu jornada debes de iniciarla."})
                 }else{
                     if(registroAsistencia[aux].salidaJornada === ""){
-                        registroAsistencia[aux].salidaJornada = currentTime
+                        registroAsistencia[aux] = {
+                            fecha: registroAsistencia[aux].fecha,
+                            ingresoJornada: registroAsistencia[aux].ingresoJornada,
+                            salidaJornada: currentTime,
+                            tiempoEnVerde : tiempoenverde || 0,
+                            tiempoEnAmarillo : tiempoenamarillo || 0,
+                            tiempoEnRojo : tiempoenrojo || 0,
+                            tiempoEnAzul : tiempoenazul || 0,
+                            tiempoEnRosado : tiempoenrosado || 0,
+
+                        }
                         docRef.update({registroAsistencia})
                         .then(()=>{
                             res.status(200).json({"msg": "Salida de jornada registrada"})
                         })
                         .catch((e)=>{
+                            console.log(e.message)
                             res.status(500).json({"msg": e.message})
                         });
                     }else{
@@ -125,6 +137,7 @@ const salidaJornada = async(req,res) => {
             }
         })
         .catch((e)=>{
+            console.log(e.message)
             res.status(500).json({"msg": e.message})
         });
 }
