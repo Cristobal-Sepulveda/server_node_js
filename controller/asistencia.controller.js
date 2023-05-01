@@ -80,7 +80,7 @@ const ingresoJornada = async(req,res) => {
                 res.status(500).send(e.message)
             });
         }catch(e){
-            res.status(404).json({"msg": "Error 404"})
+            res.status(500).json({"msg": "Error 500"})
         }
     }
 }

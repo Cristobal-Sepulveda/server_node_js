@@ -21,7 +21,7 @@ exports.notificarAdministradoresDeFaltaDeMaterial = functions.firestore
             const rol = newValue.rol
 
             // Check if the value of estaActivo changed to false
-            if (newValue.conMaterial === false) {
+            if (newValue.conMaterial === false && oldValue.conMaterial === true) {
                 const usuariosAdmin = await admin.firestore()
                     .collection('Usuarios')
                     .where('rol', '==', 'Administrador')
